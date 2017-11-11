@@ -109,7 +109,7 @@ public class Snake extends Frame implements Callback {
         g.drawImage(infoBuffer, infoLeft, infoTop, null);
         repaint();
         try {
-            Thread.sleep(100);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -138,7 +138,8 @@ public class Snake extends Frame implements Callback {
 class Block implements ISnake {
     private Callback callback;
     private int X, Y, score;
-    private boolean changed = false;
+    enum Direction { left, right, up, down }
+    private Direction direction = Direction.right;
 
     @Override public void start(Callback callback) {
         this.callback = callback;
@@ -151,33 +152,42 @@ class Block implements ISnake {
     @Override public int getScore() { return score; }
 
     @Override public boolean turnLeft() {
-        if (!changed && X > 0) X--;
-        changed = true;
+        direction = Direction.left;
         return true;
     }
 
     @Override public boolean turnRight() {
-        if (!changed && X < 19) X++;
-        changed = true;
+        direction = Direction.right;
         return true;
     }
 
     @Override public boolean turnTop() {
-        if (!changed && Y > 0) Y--;
-        changed = true;
+        direction = Direction.up;
         return true;
     }
 
     @Override public boolean turnBottom() {
-        if (!changed && Y < 19) Y++;
-        changed = true;
+        direction = Direction.down;
         return true;
     }
 
     @Override public void paint(Graphics g, int coinX, int coinY) {
         g.setColor(callback.getForeColor());
         g.fillRect(X * 25, Y * 25, 25, 25);
-        changed = false;
+        switch (direction) {
+            case up:
+                if (Y > 0) Y--;
+                break;
+            case down:
+                if (Y < 19) Y++;
+                break;
+            case left:
+                if (X > 0) X--;
+                break;
+            case right:
+                if (X < 19) X++;
+                break;
+        }
     }
 }
 
